@@ -824,13 +824,16 @@
                 diameterMsg.push('Pass, 5.1.8.1: 0.1 ≤ β ≤ 0.75');
             }
 
-            const diameters = [v, rv, h, lv];
-            const maxDev = Math.max(...diameters.map(val => Math.abs((val - d) / d * 100)));
-            if (maxDev > 0.05) {
-                diameterPass = false;
-                diameterMsg.push('FAIL: Diameter deviation > 0.05%');
-                allPass = false;
-            }
+const diameters = [v, rv, h, lv];
+const maxDev = Math.max(...diameters.map(val => Math.abs((val - d) / d * 100)));
+if (maxDev > 0.05) {
+    diameterPass = false;
+    diameterMsg.push('FAIL, 5.1.8.3: No mean diameter shall differ by more than 0.05 % from the mean diameter');
+    allPass = false;
+} else {
+    diameterMsg.push('Pass, 5.1.8.3: No mean diameter shall differ by more than 0.05 % from the mean diameter');
+}
+
 
             const bevelPass = angle >= 30 && angle <= 60;
             const bevelMsg = bevelPass ? 
@@ -1026,10 +1029,11 @@
                 ['Horizontal', getDisplayValue('horizontal', 'unitH'), ''],
                 ['Left vertical', getDisplayValue('leftVertical', 'unitLV'), ''],
                 ['', '', ''],
-                ['VALIDATION RESULTS', 'Value', 'Status'],
-                ['Orifice diameter (d)', document.getElementById('orificeDiameter').textContent, r.diameterMsg[0]],
-                ['Beta ratio (β)', r.beta.toFixed(6), r.diameterMsg[1] || ''],
-                ['Angle of bevel', `${r.angle.toFixed(1)}°`, r.bevelMsg],
+['VALIDATION RESULTS', 'Value', 'Status'],
+['Orifice diameter (d)', document.getElementById('orificeDiameter').textContent, r.diameterMsg[0]],
+['Beta ratio (β)', r.beta.toFixed(6), r.diameterMsg[1] || ''],
+['Diameter deviation check', '', ' r.diameterMsg[2] || ''],
+['Angle of bevel', `${r.angle.toFixed(1)}°`, r.bevelMsg],
                 ['Edge thickness', document.getElementById('edgeThicknessResult').textContent, r.thicknessMsg[0]],
                 ['Plate thickness', document.getElementById('thicknessResult').textContent, r.thicknessMsg[1] || ''],
                 ['Roughness', document.getElementById('roughnessResult').textContent, r.roughnessMsg],
@@ -1382,3 +1386,4 @@
     </script>
 </body>
 </html>
+
