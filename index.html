@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISO 5167 Orifice Plate Validation (2003 Edition)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         * {
             margin: 0;
@@ -126,15 +127,15 @@
         }
 
         #previewPdfBtn {
-    background-color: #22d3ee; /* Custom blue color */
-    color: white;
-    border-radius: 5px;
-    border: none;
-    padding: 12px 24px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+            background-color: #22d3ee;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -162,6 +163,15 @@
 
         .btn-success:hover {
             background: #229954;
+        }
+
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2980b9;
         }
 
         .results-section {
@@ -247,112 +257,171 @@
             display: none;
         }
 
-@media (max-width: 768px) {
-    .main-content {
-        grid-template-columns: 1fr !important;
-        padding: 10px !important;
-        gap: 15px !important;
-    }
+        /* 3D Visualization Styles */
+        .visualization-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
 
-    header div[style*="display: flex"] {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
+        #threeDCanvas {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            background: white;
+            cursor: grab;
+        }
 
-    header div[style*="min-width: 300px"] {
-        margin-left: 0 !important;
-        width: 100% !important;
-    }
+        #threeDCanvas:active {
+            cursor: grabbing;
+        }
 
-    .input-group {
-        flex-direction: column;
-    }
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+        }
 
-    .input-group input,
-    .input-group select {
-        width: 100%;
-    }
+        .view-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+            flex-wrap: wrap;
+        }
 
-    .button-group {
-        flex-direction: column;
-    }
-}
+        .view-btn {
+            padding: 6px 10px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
 
+        .view-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .export-btn {
+            padding: 6px 10px;
+            background: #27ae60;
+            border: 2px solid #27ae60;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .export-btn:hover {
+            background: #229954;
+            border-color: #229954;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr !important;
+                padding: 10px !important;
+                gap: 15px !important;
+            }
+
+            header div[style*="display: flex"] {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            header div[style*="min-width: 300px"] {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input,
+            .input-group select {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-  <div style="max-width: 1200px; margin: 0 auto; padding: 16px;">
-    <!-- Signature and Title Row -->
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
-      
-      <!-- Left: Signature -->
-      <div style="display: flex; align-items: center; gap: 20px;">
-        <div style="flex-shrink: 0;">
-          <img src="me.png" alt="Ahmed Hussein" class="signature-photo" />
+        <div style="max-width: 1200px; margin: 0 auto; padding: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="flex-shrink: 0;">
+                        <img src="me.png" alt="Ahmed Hussein" class="signature-photo" />
+                    </div>
+                    <div style="min-width: 250px; text-align: left;">
+                        <h3 style="margin: 0 0 6px 0; color: #fff; font-size: 22px; font-weight: 600;">Ahmed Hussein</h3>
+                        <p style="margin: 0 0 4px 0; color: #e0f2fe; font-size: 16px; line-height: 1.4;">
+                            <strong>Senior Instrumentation and Maintenance Planning Engineer, GASCO</strong>
+                        </p>
+                        <p style="margin: 0 0 8px 0; color: #cbd5e1; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+                            <strong>Mobile:</strong> 
+                            <a href="tel:+201068798889" style="color: #22d3ee; text-decoration: none; font-weight: 500;">+201068798889</a>
+                            <a href="https://wa.me/201068798889" target="_blank" rel="noopener noreferrer" style="display: inline-block; text-decoration: none;">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" title="Chat on WhatsApp" style="width: 24px; height: 24px; vertical-align: middle;" />
+                            </a>
+                        </p>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <a href="https://www.linkedin.com/in/ahmedhussein90/" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" title="LinkedIn Profile" class="social-icon" />
+                            </a>
+                            <a href="https://www.credly.com/badges/77121880-e979-459a-b5d4-7c8ee4590614/public_url" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+                                <img src="cmrp.png" alt="CMRP Certified" title="CMRP Certification" class="social-icon" />
+                            </a>
+                            <a href="https://badgr.com/public/assertions/ylnHIYOdQ_62QFhQlnyI6A?identity__email=ahmed.h.abdelaziz%40xed.aucegypt.edu" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+                                <img src="f3.jpg" alt="AUC Certificate" title="AUC Certificate of Achievement" class="social-icon" />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 300px; text-align: left; margin-left: 0;">
+                    <h1 style="margin: 0 0 8px 0; color: #fff;">ISO 5167-2003 Edition <br />Orifice Plate Validation<br /> Complete Validation Tool</h1>
+                    <div class="muted" style="color:#e0f2fe"></div>
+                </div>
+            </div>
         </div>
-        <div style="min-width: 250px; text-align: left;">
-          <h3 style="margin: 0 0 6px 0; color: #fff; font-size: 22px; font-weight: 600;">Ahmed Hussein</h3>
-          <p style="margin: 0 0 4px 0; color: #e0f2fe; font-size: 16px; line-height: 1.4;">
-            <strong>Senior Instrumentation and Maintenance Planning Engineer, GASCO</strong>
-          </p>
+    </header>
 
-          <p style="margin: 0 0 8px 0; color: #cbd5e1; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-            <strong>Mobile:</strong> 
-            <a href="tel:+201068798889" style="color: #22d3ee; text-decoration: none; font-weight: 500;">+201068798889</a>
-            <a href="https://wa.me/201068798889" target="_blank" rel="noopener noreferrer" style="display: inline-block; text-decoration: none;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" title="Chat on WhatsApp" style="width: 24px; height: 24px; vertical-align: middle;" />
-            </a>
-          </p>
-
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="https://www.linkedin.com/in/ahmedhussein90/" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" title="LinkedIn Profile" class="social-icon" />
-            </a>
-            <a href="https://www.credly.com/badges/77121880-e979-459a-b5d4-7c8ee4590614/public_url" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
-              <img src="cmrp.png" alt="CMRP Certified" title="CMRP Certification" class="social-icon" />
-            </a>
-            <a href="https://badgr.com/public/assertions/ylnHIYOdQ_62QFhQlnyI6A?identity__email=ahmed.h.abdelaziz%40xed.aucegypt.edu" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
-              <img src="f3.jpg" alt="AUC Certificate" title="AUC Certificate of Achievement" class="social-icon" />
-            </a>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Right: Title -->
-<div style="flex: 1; min-width: 300px; text-align: left; margin-left: 0;">
-  <h1 style="margin: 0 0 8px 0; color: #fff;">ISO 5167-2003 Edition <br />Orifice Plate Validation<br /> Complete Validation Tool</h1>
-  <div class="muted" style="color:#e0f2fe"></div>
-</div>
-
-      
-    </div>
-  </div>
-</header>
-
-<style>
-  .signature-photo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #22d3ee;
-    box-shadow: 0 4px 12px rgba(34,211,238,0.3);
-  }
-  .social-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .social-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 16px rgba(34,211,238,0.5);
-  }
-</style>
-
+    <style>
+        .signature-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #22d3ee;
+            box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+        }
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .social-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(34,211,238,0.5);
+        }
+    </style>
 
     <div class="container">
         <div class="main-content">
@@ -533,6 +602,24 @@
                     <button class="btn btn-info" id="previewPdfBtn">Preview Kelton Flocalc Validation Report</button>
                 </div>
             </div>
+
+            <!-- 3D Visualization Section -->
+            <div class="section visualization-section">
+                <h3 class="section-title">3D Orifice Plate Visualization</h3>
+                <div class="canvas-container">
+                    <div class="view-controls">
+                        <button class="view-btn" onclick="setView('front')">Front</button>
+                        <button class="view-btn" onclick="setView('top')">Top</button>
+                        <button class="view-btn" onclick="setView('side')">Side</button>
+                        <button class="view-btn" onclick="setView('iso')">Isometric</button>
+                        <button class="export-btn" onclick="exportToPNG()">📷 Export PNG</button>
+                    </div>
+                    <div id="threeDCanvas"></div>
+                </div>
+                <p style="text-align: center; margin-top: 10px; color: #7f8c8d; font-size: 14px;">
+                    <strong>Interactive 3D Model:</strong> Click and drag to rotate • Scroll to zoom • Right-click drag to pan
+                </p>
+            </div>
             
             <!-- Results Section -->
             <div class="section results-section hidden" id="resultsSection">
@@ -601,6 +688,10 @@
         let flatnessMethod = 'calculated';
         let validationResults = {};
 
+        // 3D Visualization Variables
+        let scene, camera, renderer, orificePlate, controls;
+        let animationId;
+
         function mmToInch(mm) {
             return mm / 25.4;
         }
@@ -618,7 +709,6 @@
         }
 
         function setUnits(units) {
-            // Update toggle buttons
             const buttons = document.querySelectorAll('.toggle-group .toggle-btn');
             buttons.forEach(btn => {
                 if (btn.textContent.includes(units)) {
@@ -650,7 +740,6 @@
                 }
             });
 
-            // Update roughness
             const roughnessInput = document.getElementById('roughness');
             if (roughnessInput && roughnessInput.value) {
                 const value = parseFloat(roughnessInput.value);
@@ -661,7 +750,6 @@
                 }
             }
 
-            // Update unit dropdowns
             const lengthUnits = ['unitD', 'unitE', 'unitT', 'unitFG', 'unitV', 'unitRV', 'unitH', 'unitLV'];
             lengthUnits.forEach(selectId => {
                 const select = document.getElementById(selectId);
@@ -670,7 +758,6 @@
                 }
             });
 
-            // Update roughness unit
             const roughnessSelect = document.getElementById('unitR');
             if (roughnessSelect) {
                 roughnessSelect.value = to === 'SI' ? 'µm' : 'µin';
@@ -694,39 +781,30 @@
         }
 
         function calculate() {
-            // Get all inputs (convert to mm if needed)
             const D = getValue('meterTubeBore', 'unitD');
             const e = getValue('edgeThickness', 'unitE');
             const E = getValue('thickness', 'unitT');
             const angle = parseFloat(document.getElementById('angleOfBevel').value);
-            const Ra = getValue('roughness', 'unitR', true); // roughness in mm
+            const Ra = getValue('roughness', 'unitR', true);
             const v = getValue('vertical', 'unitV');
             const rv = getValue('rightVertical', 'unitRV');
             const h = getValue('horizontal', 'unitH');
             const lv = getValue('leftVertical', 'unitLV');
 
-            // Calculate orifice diameter (mean of 4 measurements)
             const d = (v + rv + h + lv) / 4;
             let flatness;
 
-let flatnessLimit = 0.005 * ((D - d) / 2);
-let flatnessGap = flatnessMethod === 'calculated'
-    ? getValue('flatnessGap', 'unitFG')  // measured flatness gap input
-    : (parseFloat(document.getElementById('flatnessDirect').value) / 100) * ((D - d) / 2);  // user percentage converted to gap
+            let flatnessLimit = 0.005 * ((D - d) / 2);
+            let flatnessGap = flatnessMethod === 'calculated'
+                ? getValue('flatnessGap', 'unitFG')
+                : (parseFloat(document.getElementById('flatnessDirect').value) / 100) * ((D - d) / 2);
 
-let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate percentage relative to half-gap
+            let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100;
 
-
-
-
-
-            // Calculate beta ratio
             const beta = d / D;
 
-            // Validate each parameter according to ISO 5167-2:2003
             let allPass = true;
 
-            // 1. Diameter validation (Section 5.1.8.1)
             let diameterPass = true;
             let diameterMsg = [];
 
@@ -746,7 +824,6 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
                 diameterMsg.push('Pass, 5.1.8.1: 0.1 ≤ β ≤ 0.75');
             }
 
-            // Check diameter deviation (Section 5.1.8.3)
             const diameters = [v, rv, h, lv];
             const maxDev = Math.max(...diameters.map(val => Math.abs((val - d) / d * 100)));
             if (maxDev > 0.05) {
@@ -755,18 +832,15 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
                 allPass = false;
             }
 
-            // 2. Angle of bevel validation (Section 5.1.6.2)
             const bevelPass = angle >= 30 && angle <= 60;
             const bevelMsg = bevelPass ? 
                 'Pass, 5.1.6.2: The angle of bevel shall be 45° ± 15°' : 
                 'FAIL: Angle must be 45° ± 15°';
             if (!bevelPass) allPass = false;
 
-            // 3. Thickness validation (Section 5.1.5)
             let thicknessPass = true;
             let thicknessMsg = [];
 
-            // Edge thickness: 0.005D ≤ e ≤ 0.02D
             if (e >= 0.005 * D && e <= 0.02 * D) {
                 thicknessMsg.push('Pass, 5.1.5.1: 0.005D ≤ e ≤ 0.02D');
             } else {
@@ -775,7 +849,6 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
                 allPass = false;
             }
 
-            // Plate thickness: e ≤ E ≤ 0.05D
             if (E >= e && E <= 0.05 * D) {
                 thicknessMsg.push('Pass, 5.1.5.3: e ≤ E ≤ 0.05D');
             } else {
@@ -784,23 +857,20 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
                 allPass = false;
             }
 
-            // 4. Roughness validation (Section 5.1.3.2)
-            const roughnessLimit = 0.0001 * d; // in mm
+            const roughnessLimit = 0.0001 * d;
             const roughnessPass = Ra < roughnessLimit;
             const roughnessMsg = roughnessPass ? 
                 `Pass, 5.1.3.2: Ra < 0.0001d (limit: ${(roughnessLimit * 1000).toFixed(2)} µm)` : 
                 `FAIL: Ra must be < 0.0001d (limit: ${(roughnessLimit * 1000).toFixed(2)} µm)`;
             if (!roughnessPass) allPass = false;
 
-            // 5. Flatness validation (Section 5.1.3.1)
-            const flatnessLimitPercent = 0.5; // 0.5% limit
+            const flatnessLimitPercent = 0.5;
             const flatnessPass = flatnessPercentage <= flatnessLimitPercent;
             const flatnessMsg = flatnessPass ? 
                 'Pass, 5.1.3.1: Gradient across plate must be less than 0.5% at all points' : 
                 'FAIL: Flatness exceeds 0.5% gradient limit';
             if (!flatnessPass) allPass = false;
 
-            // Store results
             validationResults = {
                 D, e, E, angle, Ra, flatness, flatnessPercentage, d, beta,
                 diameterPass, bevelPass, thicknessPass, roughnessPass, flatnessPass, allPass,
@@ -808,6 +878,10 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
             };
 
             displayResults();
+            
+            if (scene) {
+                update3DModel();
+            }
         }
 
         function getValue(inputId, unitSelectId, isRoughness = false) {
@@ -903,7 +977,6 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
             const date = new Date().toLocaleDateString('en-CA');
             const time = new Date().toLocaleTimeString();
 
-            // Helper functions to get displayed values with units for input fields
             const getDisplayValue = (inputId, unitId) => {
                 const value = parseFloat(document.getElementById(inputId).value);
                 const unit = document.getElementById(unitId).value;
@@ -968,9 +1041,9 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
             const ws = XLSX.utils.aoa_to_sheet(data);
 
             ws['!cols'] = [
-                {wch: 30}, // Column A
-                {wch: 20}, // Column B
-                {wch: 60}  // Column C
+                {wch: 30},
+                {wch: 20},
+                {wch: 60}
             ];
 
             ws['!margins'] = {
@@ -995,21 +1068,317 @@ let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate perce
             XLSX.writeFile(wb, filename);
         }
 
-        // PDF Preview functionality
-document.getElementById('previewPdfBtn').addEventListener('click', function() {
-  const pdfUrl = './ISO 5167 Orifice Plate Validation - Kelton Flocalc.pdf';  // Adjust path if needed
-  window.open(pdfUrl, '_blank', 'fullscreen=yes');
-});
+        document.getElementById('previewPdfBtn').addEventListener('click', function() {
+            const pdfUrl = './ISO 5167 Orifice Plate Validation - Kelton Flocalc.pdf';
+            window.open(pdfUrl, '_blank', 'fullscreen=yes');
+        });
 
+        // ========== 3D VISUALIZATION CODE ==========
 
+        function init3DVisualization() {
+            const container = document.getElementById('threeDCanvas');
+            if (!container) return;
 
+            if (renderer) {
+                renderer.dispose();
+                container.innerHTML = '';
+            }
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff);
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000);
+            camera.position.set(300, 200, 400);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 100;
+            controls.maxDistance = 1500;
+            controls.maxPolarAngle = Math.PI;
+
+            // Reduced lighting for less bright appearance
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight1.position.set(200, 300, 200);
+            directionalLight1.castShadow = true;
+            directionalLight1.shadow.mapSize.width = 2048;
+            directionalLight1.shadow.mapSize.height = 2048;
+            scene.add(directionalLight1);
+
+            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.25);
+            directionalLight2.position.set(-200, 200, -200);
+            scene.add(directionalLight2);
+
+            const directionalLight3 = new THREE.DirectionalLight(0xffffff, 0.2);
+            directionalLight3.position.set(0, -200, 100);
+            scene.add(directionalLight3);
+
+            window.addEventListener('resize', onWindowResize, false);
+
+            update3DModel();
+            animate();
+        }
+
+        function createOrificePlate() {
+            const D = getValue('meterTubeBore', 'unitD');
+            const d_measurements = [
+                getValue('vertical', 'unitV'),
+                getValue('rightVertical', 'unitRV'),
+                getValue('horizontal', 'unitH'),
+                getValue('leftVertical', 'unitLV')
+            ];
+            const d = d_measurements.reduce((a, b) => a + b, 0) / 4;
+            const e = getValue('edgeThickness', 'unitE');
+            const E = getValue('thickness', 'unitT');
+            const bevelAngle = parseFloat(document.getElementById('angleOfBevel').value);
+
+            if (orificePlate) {
+                scene.remove(orificePlate);
+                orificePlate.traverse((child) => {
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) child.material.dispose();
+                });
+            }
+
+            orificePlate = new THREE.Group();
+
+            const steelMaterial = new THREE.MeshStandardMaterial({
+                color: 0x8c9199,
+                metalness: 0.9,
+                roughness: 0.3,
+                envMapIntensity: 1.0
+            });
+
+            const edgeMaterial = new THREE.MeshStandardMaterial({
+                color: 0xa8b0b8,
+                metalness: 0.85,
+                roughness: 0.4
+            });
+
+            const outerRadius = D / 2;
+            const innerRadius = d / 2;
+            
+            const plateGeometry = new THREE.CylinderGeometry(outerRadius, outerRadius, E, 64);
+            const plateMesh = new THREE.Mesh(plateGeometry, steelMaterial);
+            plateMesh.castShadow = true;
+            plateMesh.receiveShadow = true;
+            orificePlate.add(plateMesh);
+
+            // Create the bore hole with WHITE color
+            const boreGeometry = new THREE.CylinderGeometry(innerRadius, innerRadius, E + 2, 64);
+            const boreMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                opacity: 1,
+                transparent: false,
+                side: THREE.DoubleSide,
+                metalness: 0,
+                roughness: 1
+            });
+            const boreMesh = new THREE.Mesh(boreGeometry, boreMaterial);
+            orificePlate.add(boreMesh);
+
+            const edgeRingGeometry = new THREE.CylinderGeometry(
+                innerRadius + 0.1,
+                innerRadius,
+                e,
+                64
+            );
+            const edgeRing = new THREE.Mesh(edgeRingGeometry, edgeMaterial);
+            edgeRing.position.y = E / 2 - e / 2;
+            orificePlate.add(edgeRing);
+
+            const bevelRadiusTop = innerRadius;
+            const bevelRadiusBottom = innerRadius + (E - e) * Math.tan((bevelAngle * Math.PI) / 180);
+            const bevelHeight = E - e;
+            
+            const bevelGeometry = new THREE.CylinderGeometry(
+                bevelRadiusBottom,
+                bevelRadiusTop,
+                bevelHeight,
+                64
+            );
+            const bevelMesh = new THREE.Mesh(bevelGeometry, edgeMaterial);
+            bevelMesh.position.y = -e / 2;
+            orificePlate.add(bevelMesh);
+
+            addDimensionLines(D, d, E, e);
+
+            scene.add(orificePlate);
+        }
+
+        function addDimensionLines(D, d, E, e) {
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x667eea, linewidth: 2 });
+            
+            const outerDiamPoints = [];
+            outerDiamPoints.push(new THREE.Vector3(-D / 2, E / 2 + 20, 0));
+            outerDiamPoints.push(new THREE.Vector3(D / 2, E / 2 + 20, 0));
+            const outerDiamGeometry = new THREE.BufferGeometry().setFromPoints(outerDiamPoints);
+            const outerDiamLine = new THREE.Line(outerDiamGeometry, lineMaterial);
+            orificePlate.add(outerDiamLine);
+
+            const markerGeometry = new THREE.CylinderGeometry(1, 1, 15, 8);
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0x667eea });
+            
+            const marker1 = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker1.position.set(-D / 2, E / 2 + 20, 0);
+            marker1.rotation.z = Math.PI / 2;
+            orificePlate.add(marker1);
+            
+            const marker2 = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker2.position.set(D / 2, E / 2 + 20, 0);
+            marker2.rotation.z = Math.PI / 2;
+            orificePlate.add(marker2);
+
+            const innerDiamPoints = [];
+            innerDiamPoints.push(new THREE.Vector3(-d / 2, E / 2 + 40, 0));
+            innerDiamPoints.push(new THREE.Vector3(d / 2, E / 2 + 40, 0));
+            const innerDiamGeometry = new THREE.BufferGeometry().setFromPoints(innerDiamPoints);
+            const innerDiamLine = new THREE.Line(innerDiamGeometry, lineMaterial);
+            orificePlate.add(innerDiamLine);
+
+            const marker3 = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker3.position.set(-d / 2, E / 2 + 40, 0);
+            marker3.rotation.z = Math.PI / 2;
+            orificePlate.add(marker3);
+            
+            const marker4 = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker4.position.set(d / 2, E / 2 + 40, 0);
+            marker4.rotation.z = Math.PI / 2;
+            orificePlate.add(marker4);
+
+            const thicknessPoints = [];
+            thicknessPoints.push(new THREE.Vector3(D / 2 + 30, -E / 2, 0));
+            thicknessPoints.push(new THREE.Vector3(D / 2 + 30, E / 2, 0));
+            const thicknessGeometry = new THREE.BufferGeometry().setFromPoints(thicknessPoints);
+            const thicknessLine = new THREE.Line(thicknessGeometry, lineMaterial);
+            orificePlate.add(thicknessLine);
+
+            const marker5 = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker5.position.set(D / 2 + 30, -E / 2, 0);
+            orificePlate.add(marker5);
+            
+            const marker6 = new THREE.Mesh(markerGeometry, markerMaterial);
+            marker6.position.set(D / 2 + 30, E / 2, 0);
+            orificePlate.add(marker6);
+
+            addTextLabel(`D = ${D.toFixed(2)} mm`, 0, E / 2 + 30, 0);
+            addTextLabel(`d = ${d.toFixed(2)} mm`, 0, E / 2 + 50, 0);
+            addTextLabel(`E = ${E.toFixed(2)} mm`, D / 2 + 50, 0, 0);
+        }
+
+        function addTextLabel(text, x, y, z) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 256;
+            canvas.height = 64;
+            
+            context.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            
+            context.strokeStyle = '#667eea';
+            context.lineWidth = 2;
+            context.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+            
+            context.fillStyle = '#2c3e50';
+            context.font = 'bold 24px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            
+            sprite.position.set(x, y, z);
+            sprite.scale.set(60, 15, 1);
+            
+            orificePlate.add(sprite);
+        }
+
+        function update3DModel() {
+            createOrificePlate();
+        }
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('threeDCanvas');
+            if (!container) return;
+            
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        function setView(view) {
+            switch(view) {
+                case 'front':
+                    camera.position.set(0, 0, 400);
+                    break;
+                case 'top':
+                    camera.position.set(0, 400, 0);
+                    break;
+                case 'side':
+                    camera.position.set(400, 0, 0);
+                    break;
+                case 'iso':
+                    camera.position.set(300, 200, 400);
+                    break;
+            }
+            camera.lookAt(0, 0, 0);
+            controls.update();
+        }
+
+        function exportToPNG() {
+            if (!renderer) {
+                alert('3D model not initialized yet. Please wait for the model to load.');
+                return;
+            }
+
+            try {
+                renderer.render(scene, camera);
+                
+                const canvas = renderer.domElement;
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    const tagNum = document.getElementById('tagNumber').value || 'Orifice-Plate';
+                    const date = new Date().toISOString().split('T')[0];
+                    link.download = `${tagNum}-3D-Model-${date}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                }, 'image/png');
+            } catch (error) {
+                console.error('Error exporting PNG:', error);
+                alert('Error exporting image. Please try again.');
+            }
+        }
+
+        window.addEventListener('load', function() {
+            init3DVisualization();
+        });
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
