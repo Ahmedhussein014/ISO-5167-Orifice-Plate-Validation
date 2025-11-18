@@ -780,118 +780,109 @@
             }
         }
 
-       function calculate() {
-    const D = getValue('meterTubeBore', 'unitD');
-    const e = getValue('edgeThickness', 'unitE');
-    const E = getValue('thickness', 'unitT');
-    const angle = parseFloat(document.getElementById('angleOfBevel').value);
-    const Ra = getValue('roughness', 'unitR', true);
-    const v = getValue('vertical', 'unitV');
-    const rv = getValue('rightVertical', 'unitRV');
-    const h = getValue('horizontal', 'unitH');
-    const lv = getValue('leftVertical', 'unitLV');
+        function calculate() {
+            const D = getValue('meterTubeBore', 'unitD');
+            const e = getValue('edgeThickness', 'unitE');
+            const E = getValue('thickness', 'unitT');
+            const angle = parseFloat(document.getElementById('angleOfBevel').value);
+            const Ra = getValue('roughness', 'unitR', true);
+            const v = getValue('vertical', 'unitV');
+            const rv = getValue('rightVertical', 'unitRV');
+            const h = getValue('horizontal', 'unitH');
+            const lv = getValue('leftVertical', 'unitLV');
 
-    const d = (v + rv + h + lv) / 4;
-    let flatness;
+            const d = (v + rv + h + lv) / 4;
+            let flatness;
 
-    let flatnessLimit = 0.005 * ((D - d) / 2);
-    let flatnessGap = flatnessMethod === 'calculated'
-        ? getValue('flatnessGap', 'unitFG')
-        : (parseFloat(document.getElementById('flatnessDirect').value) / 100) * ((D - d) / 2);
+            let flatnessLimit = 0.005 * ((D - d) / 2);
+            let flatnessGap = flatnessMethod === 'calculated'
+                ? getValue('flatnessGap', 'unitFG')
+                : (parseFloat(document.getElementById('flatnessDirect').value) / 100) * ((D - d) / 2);
 
-    let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100;
+            let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100;
 
-    const beta = d / D;
+            const beta = d / D;
 
-    let allPass = true;
+            let allPass = true;
 
-    // 1. Diameter validation (Section 5.1.8.1 & 5.1.8.3)
-    let diameterPass = true;
-    let diameterMsg = [];
+            let diameterPass = true;
+            let diameterMsg = [];
 
-    if (d < 12.5) {
-        diameterPass = false;
-        diameterMsg.push('FAIL: Orifice diameter < 12.5 mm');
-        allPass = false;
-    } else {
-        diameterMsg.push('Pass, 5.1.8.1: Orifice diameter ≥ 12.5 mm');
-    }
+            if (d < 12.5) {
+                diameterPass = false;
+                diameterMsg.push('FAIL: Orifice diameter < 12.5 mm');
+                allPass = false;
+            } else {
+                diameterMsg.push('Pass, 5.1.8.1: Orifice diameter ≥ 12.5 mm');
+            }
 
-    if (beta < 0.1 || beta > 0.75) {
-        diameterPass = false;
-        diameterMsg.push('FAIL: 0.1 ≤ β ≤ 0.75 not satisfied');
-        allPass = false;
-    } else {
-        diameterMsg.push('Pass, 5.1.8.1: 0.1 ≤ β ≤ 0.75');
-    }
+            if (beta < 0.1 || beta > 0.75) {
+                diameterPass = false;
+                diameterMsg.push('FAIL: 0.1 ≤ β ≤ 0.75 not satisfied');
+                allPass = false;
+            } else {
+                diameterMsg.push('Pass, 5.1.8.1: 0.1 ≤ β ≤ 0.75');
+            }
 
-    // Check diameter deviation (Section 5.1.8.3)
-    const diameters = [v, rv, h, lv];
-    const maxDev = Math.max(...diameters.map(val => Math.abs((val - d) / d * 100)));
-    if (maxDev > 0.05) {
-        diameterPass = false;
-        diameterMsg.push('FAIL, 5.1.8.3: No mean diameter shall differ by more than 0.05 % from the mean diameter');
-        allPass = false;
-    } else {
-        diameterMsg.push('Pass, 5.1.8.3: No mean diameter shall differ by more than 0.05 % from the mean diameter');
-    }
+            const diameters = [v, rv, h, lv];
+            const maxDev = Math.max(...diameters.map(val => Math.abs((val - d) / d * 100)));
+            if (maxDev > 0.05) {
+                diameterPass = false;
+                diameterMsg.push('FAIL: Diameter deviation > 0.05%');
+                allPass = false;
+            }
 
-    // 2. Angle of bevel validation (Section 5.1.6.2)
-    const bevelPass = angle >= 30 && angle <= 60;
-    const bevelMsg = bevelPass ? 
-        'Pass, 5.1.6.2: The angle of bevel shall be 45° ± 15°' : 
-        'FAIL: Angle must be 45° ± 15°';
-    if (!bevelPass) allPass = false;
+            const bevelPass = angle >= 30 && angle <= 60;
+            const bevelMsg = bevelPass ? 
+                'Pass, 5.1.6.2: The angle of bevel shall be 45° ± 15°' : 
+                'FAIL: Angle must be 45° ± 15°';
+            if (!bevelPass) allPass = false;
 
-    // 3. Thickness validation (Sections 5.1.5.1 & 5.1.5.3)
-    let thicknessPass = true;
-    let thicknessMsg = [];
+            let thicknessPass = true;
+            let thicknessMsg = [];
 
-    if (e >= 0.005 * D && e <= 0.02 * D) {
-        thicknessMsg.push('Pass, 5.1.5.1: 0.005D ≤ e ≤ 0.02D');
-    } else {
-        thicknessPass = false;
-        thicknessMsg.push('FAIL: 0.005D ≤ e ≤ 0.02D not satisfied');
-        allPass = false;
-    }
+            if (e >= 0.005 * D && e <= 0.02 * D) {
+                thicknessMsg.push('Pass, 5.1.5.1: 0.005D ≤ e ≤ 0.02D');
+            } else {
+                thicknessPass = false;
+                thicknessMsg.push('FAIL: 0.005D ≤ e ≤ 0.02D not satisfied');
+                allPass = false;
+            }
 
-    if (E >= e && E <= 0.05 * D) {
-        thicknessMsg.push('Pass, 5.1.5.3: e ≤ E ≤ 0.05D');
-    } else {
-        thicknessPass = false;
-        thicknessMsg.push('FAIL: e ≤ E ≤ 0.05D not satisfied');
-        allPass = false;
-    }
+            if (E >= e && E <= 0.05 * D) {
+                thicknessMsg.push('Pass, 5.1.5.3: e ≤ E ≤ 0.05D');
+            } else {
+                thicknessPass = false;
+                thicknessMsg.push('FAIL: e ≤ E ≤ 0.05D not satisfied');
+                allPass = false;
+            }
 
-    // 4. Roughness validation (Section 5.1.3.2)
-    const roughnessLimit = 0.0001 * d;
-    const roughnessPass = Ra < roughnessLimit;
-    const roughnessMsg = roughnessPass ? 
-        `Pass, 5.1.3.2: Ra < 0.0001d (limit: ${(roughnessLimit * 1000).toFixed(2)} µm)` : 
-        `FAIL: Ra must be < 0.0001d (limit: ${(roughnessLimit * 1000).toFixed(2)} µm)`;
-    if (!roughnessPass) allPass = false;
+            const roughnessLimit = 0.0001 * d;
+            const roughnessPass = Ra < roughnessLimit;
+            const roughnessMsg = roughnessPass ? 
+                `Pass, 5.1.3.2: Ra < 0.0001d (limit: ${(roughnessLimit * 1000).toFixed(2)} µm)` : 
+                `FAIL: Ra must be < 0.0001d (limit: ${(roughnessLimit * 1000).toFixed(2)} µm)`;
+            if (!roughnessPass) allPass = false;
 
-    // 5. Flatness validation (Section 5.1.3.1)
-    const flatnessLimitPercent = 0.5;
-    const flatnessPass = flatnessPercentage <= flatnessLimitPercent;
-    const flatnessMsg = flatnessPass ? 
-        'Pass, 5.1.3.1: Gradient across plate must be less than 0.5% at all points' : 
-        'FAIL: Flatness exceeds 0.5% gradient limit';
-    if (!flatnessPass) allPass = false;
+            const flatnessLimitPercent = 0.5;
+            const flatnessPass = flatnessPercentage <= flatnessLimitPercent;
+            const flatnessMsg = flatnessPass ? 
+                'Pass, 5.1.3.1: Gradient across plate must be less than 0.5% at all points' : 
+                'FAIL: Flatness exceeds 0.5% gradient limit';
+            if (!flatnessPass) allPass = false;
 
-    validationResults = {
-        D, e, E, angle, Ra, flatness, flatnessPercentage, d, beta,
-        diameterPass, bevelPass, thicknessPass, roughnessPass, flatnessPass, allPass,
-        diameterMsg, bevelMsg, thicknessMsg, roughnessMsg, flatnessMsg
-    };
+            validationResults = {
+                D, e, E, angle, Ra, flatness, flatnessPercentage, d, beta,
+                diameterPass, bevelPass, thicknessPass, roughnessPass, flatnessPass, allPass,
+                diameterMsg, bevelMsg, thicknessMsg, roughnessMsg, flatnessMsg
+            };
 
-    displayResults();
-    
-    if (scene) {
-        update3DModel();
-    }
-}
-
+            displayResults();
+            
+            if (scene) {
+                update3DModel();
+            }
+        }
 
         function getValue(inputId, unitSelectId, isRoughness = false) {
             const input = document.getElementById(inputId);
@@ -1035,11 +1026,10 @@
                 ['Horizontal', getDisplayValue('horizontal', 'unitH'), ''],
                 ['Left vertical', getDisplayValue('leftVertical', 'unitLV'), ''],
                 ['', '', ''],
-['VALIDATION RESULTS', 'Value', 'Status'],
-['Orifice diameter (d)', document.getElementById('orificeDiameter').textContent, r.diameterMsg[0]],
-['Beta ratio (β)', r.beta.toFixed(6), r.diameterMsg[1] || ''],
-['Diameter deviation check', '', ' r.diameterMsg[2] || ''],
-['Angle of bevel', `${r.angle.toFixed(1)}°`, r.bevelMsg],
+                ['VALIDATION RESULTS', 'Value', 'Status'],
+                ['Orifice diameter (d)', document.getElementById('orificeDiameter').textContent, r.diameterMsg[0]],
+                ['Beta ratio (β)', r.beta.toFixed(6), r.diameterMsg[1] || ''],
+                ['Angle of bevel', `${r.angle.toFixed(1)}°`, r.bevelMsg],
                 ['Edge thickness', document.getElementById('edgeThicknessResult').textContent, r.thicknessMsg[0]],
                 ['Plate thickness', document.getElementById('thicknessResult').textContent, r.thicknessMsg[1] || ''],
                 ['Roughness', document.getElementById('roughnessResult').textContent, r.roughnessMsg],
@@ -1392,5 +1382,3 @@
     </script>
 </body>
 </html>
-
-
