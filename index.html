@@ -824,6 +824,7 @@
                 diameterMsg.push('Pass, 5.1.8.1: 0.1 ≤ β ≤ 0.75');
             }
 
+// Check diameter deviation (Section 5.1.8.3)
 const diameters = [v, rv, h, lv];
 const maxDev = Math.max(...diameters.map(val => Math.abs((val - d) / d * 100)));
 if (maxDev > 0.05) {
@@ -833,7 +834,6 @@ if (maxDev > 0.05) {
 } else {
     diameterMsg.push('Pass, 5.1.8.3: No mean diameter shall differ by more than 0.05 % from the mean diameter');
 }
-
 
             const bevelPass = angle >= 30 && angle <= 60;
             const bevelMsg = bevelPass ? 
@@ -1386,4 +1386,5 @@ if (maxDev > 0.05) {
     </script>
 </body>
 </html>
+
 
