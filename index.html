@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ISO 5167 Orifice Plate Validation (2003 Edition)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -29,21 +28,112 @@
             overflow: hidden;
         }
 
-        .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
+        header {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid #60a5fa;
+            position: relative;
+            background: rgba(30, 58, 138, 0.95);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
+        .header-content {
+            max-width: 1400px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
         }
 
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+        .signature-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .signature-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #22d3ee;
+            box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+            flex-shrink: 0;
+        }
+
+        .signature-info {
+            min-width: 250px;
+            color: #e0f2fe;
+            text-align: left;
+        }
+
+        .signature-info h3 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .signature-info p {
+            margin: 0 0 4px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .contact-info {
+            margin: 0 0 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contact-info a {
+            color: #22d3ee;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .social-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(34,211,238,0.5);
+        }
+
+        .page-title {
+            flex: 1;
+            min-width: 300px;
+            text-align: left;
+            margin-left: 40px;
+            color: #fff;
+        }
+
+        .page-title h1 {
+            margin: 0 0 8px 0;
+            font-weight: 700;
+            font-size: 30px;
+            line-height: 1.2;
+        }
+
+        .page-title .muted {
+            color: #e0f2fe;
         }
 
         .main-content {
@@ -153,6 +243,20 @@
             background: #229954;
         }
 
+        .btn-info {
+            background-color: #22d3ee;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-info:hover {
+            background-color: #0aa9c8;
+        }
+
         .results-section {
             grid-column: 1 / -1;
         }
@@ -236,92 +340,92 @@
             display: none;
         }
 
+        #pdfPreviewContainer {
+            position: fixed;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            background: white;
+            border: 2px solid #667eea;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        #keltonPdfIframe {
+            width: 100%;
+            height: 90%;
+            border: none;
+        }
+
+        #closePdfPreview {
+            background:#667eea;
+            color:white;
+            border:none;
+            border-radius:4px;
+            padding:6px 12px;
+            cursor:pointer;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
+            }
+            .signature-content {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            #pdfPreviewContainer {
+                top: 5%;
+                left: 5%;
+                width: 90%;
+                height: 90%;
             }
         }
     </style>
 </head>
 <body>
     <header>
-  <div style="max-width: 1200px; margin: 0 auto; padding: 16px;">
-    <!-- Signature and Title Row -->
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
-      
-      <!-- Left: Signature -->
-      <div style="display: flex; align-items: center; gap: 20px;">
-        <div style="flex-shrink: 0;">
+      <div class="header-content">
+        <div class="signature-wrapper">
           <img src="me.png" alt="Ahmed Hussein" class="signature-photo" />
-        </div>
-        <div style="min-width: 250px; text-align: left;">
-          <h3 style="margin: 0 0 6px 0; color: #fff; font-size: 22px; font-weight: 600;">Ahmed Hussein</h3>
-          <p style="margin: 0 0 4px 0; color: #e0f2fe; font-size: 16px; line-height: 1.4;">
-            <strong>Senior Instrumentation and Maintenance Planning Engineer, GASCO</strong>
-          </p>
-
-          <p style="margin: 0 0 8px 0; color: #cbd5e1; font-size: 14px; display: flex; align-items: center; gap: 8px;">
-            <strong>Mobile:</strong> 
-            <a href="tel:+201068798889" style="color: #22d3ee; text-decoration: none; font-weight: 500;">+201068798889</a>
-            <a href="https://wa.me/201068798889" target="_blank" rel="noopener noreferrer" style="display: inline-block; text-decoration: none;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" title="Chat on WhatsApp" style="width: 24px; height: 24px; vertical-align: middle;" />
-            </a>
-          </p>
-
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <a href="https://www.linkedin.com/in/ahmedhussein90/" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" title="LinkedIn Profile" class="social-icon" />
-            </a>
-            <a href="https://www.credly.com/badges/77121880-e979-459a-b5d4-7c8ee4590614/public_url" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
-              <img src="cmrp.png" alt="CMRP Certified" title="CMRP Certification" class="social-icon" />
-            </a>
-            <a href="https://badgr.com/public/assertions/ylnHIYOdQ_62QFhQlnyI6A?identity__email=ahmed.h.abdelaziz%40xed.aucegypt.edu" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
-              <img src="f3.jpg" alt="AUC Certificate" title="AUC Certificate of Achievement" class="social-icon" />
-            </a>
+          <div class="signature-info">
+            <h3>Ahmed Hussein</h3>
+            <p><strong>Senior Instrumentation and Maintenance Planning Engineer, GASCO</strong></p>
+            <p class="contact-info">
+              <strong>Mobile:</strong> 
+              <a href="tel:+201068798889">+201068798889</a>
+              <a href="https://wa.me/201068798889" target="_blank" rel="noopener noreferrer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" title="Chat on WhatsApp" style="width: 24px; height: 24px; vertical-align: middle;" />
+              </a>
+            </p>
+            <div class="social-icons">
+              <a href="https://www.linkedin.com/in/ahmedhussein90/" target="_blank" rel="noopener noreferrer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" title="LinkedIn Profile" class="social-icon" />
+              </a>
+              <a href="https://www.credly.com/badges/77121880-e979-459a-b5d4-7c8ee4590614/public_url" target="_blank" rel="noopener noreferrer">
+                <img src="cmrp.png" alt="CMRP Certified" title="CMRP Certification" class="social-icon" />
+              </a>
+              <a href="https://badgr.com/public/assertions/ylnHIYOdQ_62QFhQlnyI6A?identity__email=ahmed.h.abdelaziz%40xed.aucegypt.edu" target="_blank" rel="noopener noreferrer">
+                <img src="f3.jpg" alt="AUC Certificate" title="AUC Certificate of Achievement" class="social-icon" />
+              </a>
+            </div>
           </div>
         </div>
+        <div class="page-title">
+          <h1>ISO 5167 Orifice Plate Validation<br />2003 Edition - Complete Validation Tool</h1>
+          <div class="muted"></div>
+        </div>
       </div>
-      
-      <!-- Right: Title -->
-<div style="flex: 1; min-width: 300px; text-align: left; margin-left: 40px;">
-  <h1 style="margin: 0 0 8px 0; color: #fff;">ISO 5167-2003 Edition <br />Orifice Plate Validation<br /> Complete Validation Tool</h1>
-  <div class="muted" style="color:#e0f2fe"></div>
-</div>
-
-      
-    </div>
-  </div>
-</header>
-
-<style>
-  .signature-photo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #22d3ee;
-    box-shadow: 0 4px 12px rgba(34,211,238,0.3);
-  }
-  .social-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .social-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 16px rgba(34,211,238,0.5);
-  }
-</style>
+    </header>
 
     <div class="container">
-
         <div class="main-content">
             <!-- Options Section -->
             <div class="section">
                 <h3 class="section-title">Options</h3>
-
+                
                 <div class="form-group">
                     <label>Unit System:</label>
                     <div class="toggle-group">
@@ -329,14 +433,14 @@
                         <button class="toggle-btn" onclick="setUnits('Imperial')">Imperial</button>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Standard:</label>
                     <select id="standard" disabled>
                         <option value="2003">ISO 5167 2003</option>
                     </select>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Flatness Method:</label>
                     <div class="toggle-group">
@@ -344,7 +448,7 @@
                         <button class="toggle-btn" onclick="setFlatnessMethod('user')">User Entered</button>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Report Information:</label>
                     <input type="text" id="preparedBy" placeholder="Prepared By">
@@ -359,11 +463,11 @@
                     <input type="text" id="client" placeholder="Client">
                 </div>
             </div>
-
+            
             <!-- Inputs Section -->
             <div class="section">
                 <h3 class="section-title">Inputs</h3>
-
+                
                 <div class="form-group">
                     <label>Meter Tube Bore (D):</label>
                     <div class="input-group">
@@ -374,7 +478,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Edge Thickness (e):</label>
                     <div class="input-group">
@@ -385,7 +489,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Thickness (E):</label>
                     <div class="input-group">
@@ -396,7 +500,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Angle of Bevel:</label>
                     <div class="input-group">
@@ -406,7 +510,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Roughness (Ra):</label>
                     <div class="input-group">
@@ -417,7 +521,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group" id="flatnessGapGroup">
                     <label>Flatness Gap:</label>
                     <div class="input-group">
@@ -428,7 +532,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group hidden" id="flatnessDirectGroup">
                     <label>Flatness (%):</label>
                     <div class="input-group">
@@ -439,11 +543,11 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Orifice Bore Measurements -->
             <div class="section">
                 <h3 class="section-title">Orifice Bore Measurements</h3>
-
+                
                 <div class="form-group">
                     <label>Vertical:</label>
                     <div class="input-group">
@@ -454,7 +558,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Right Vertical:</label>
                     <div class="input-group">
@@ -465,7 +569,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Horizontal:</label>
                     <div class="input-group">
@@ -476,7 +580,7 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="form-group">
                     <label>Left Vertical:</label>
                     <div class="input-group">
@@ -487,20 +591,21 @@
                         </select>
                     </div>
                 </div>
-
+                
                 <div class="button-group">
                     <button class="btn btn-primary" onclick="calculate()">Calculate</button>
                     <button class="btn btn-secondary" onclick="reset()">Reset</button>
                     <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
+                    <button class="btn btn-info" id="previewPdfBtn">Preview Kelton Report</button>
                 </div>
             </div>
-
+            
             <!-- Results Section -->
             <div class="section results-section hidden" id="resultsSection">
                 <h3 class="section-title">Validation Results</h3>
-
+                
                 <div id="overallResult"></div>
-
+                
                 <div class="result-item">
                     <h4>Diameter</h4>
                     <div class="result-value">
@@ -513,7 +618,7 @@
                     </div>
                     <div class="validation-status" id="diameterStatus"></div>
                 </div>
-
+                
                 <div class="result-item">
                     <h4>Angle of Bevel</h4>
                     <div class="result-value">
@@ -522,7 +627,7 @@
                     </div>
                     <div class="validation-status" id="bevelStatus"></div>
                 </div>
-
+                
                 <div class="result-item">
                     <h4>Thickness</h4>
                     <div class="result-value">
@@ -535,7 +640,7 @@
                     </div>
                     <div class="validation-status" id="thicknessStatus"></div>
                 </div>
-
+                
                 <div class="result-item">
                     <h4>Roughness</h4>
                     <div class="result-value">
@@ -544,7 +649,7 @@
                     </div>
                     <div class="validation-status" id="roughnessStatus"></div>
                 </div>
-
+                
                 <div class="result-item">
                     <h4>Flatness</h4>
                     <div class="result-value">
@@ -557,12 +662,18 @@
         </div>
     </div>
 
+    <div id="pdfPreviewContainer" class="hidden">
+        <div style="text-align: right; padding: 8px;">
+            <button id="closePdfPreview">Close</button>
+        </div>
+        <iframe id="keltonPdfIframe" src=""></iframe>
+    </div>
+
     <script>
         let currentUnits = 'SI';
         let flatnessMethod = 'calculated';
         let validationResults = {};
 
-        // Unit conversion functions
         function mmToInch(mm) {
             return mm / 25.4;
         }
@@ -780,10 +891,8 @@
             const unit = unitSelect.value;
 
             if (isRoughness) {
-                // Convert roughness to mm (µm to mm or µin to mm)
                 return unit === 'µm' ? value / 1000 : microInchToMicroMeter(value) / 1000;
             } else {
-                // Convert length to mm
                 return unit === 'mm' ? value : inchToMm(value);
             }
         }
@@ -793,7 +902,6 @@
             const unitLabel = currentUnits === 'SI' ? 'mm' : 'in';
             const roughnessUnit = currentUnits === 'SI' ? 'µm' : 'µin';
 
-            // Convert values for display
             const displayD = currentUnits === 'SI' ? r.D : mmToInch(r.D);
             const displayd = currentUnits === 'SI' ? r.d : mmToInch(r.d);
             const displaye = currentUnits === 'SI' ? r.e : mmToInch(r.e);
@@ -801,53 +909,40 @@
             const displayFlatness = currentUnits === 'SI' ? r.flatness : mmToInch(r.flatness);
             const displayRa = currentUnits === 'SI' ? r.Ra * 1000 : microMeterToMicroInch(r.Ra * 1000);
 
-            // Show results section
             document.getElementById('resultsSection').classList.remove('hidden');
-
-            // Overall result
             const overallDiv = document.getElementById('overallResult');
             overallDiv.className = 'overall-result ' + (r.allPass ? 'status-pass' : 'status-fail');
             overallDiv.textContent = r.allPass ? 
                 'PASS - Orifice plate validated against ISO 5167 criteria' : 
                 'FAIL - Orifice plate does not meet ISO 5167 criteria';
 
-            // Diameter results
-            document.getElementById('orificeDiameter').textContent = 
-                `${displayd.toFixed(currentUnits === 'SI' ? 3 : 4)} ${unitLabel}`;
+            document.getElementById('orificeDiameter').textContent = `${displayd.toFixed(currentUnits === 'SI' ? 3 : 4)} ${unitLabel}`;
             document.getElementById('betaRatio').textContent = r.beta.toFixed(6);
             const diameterStatus = document.getElementById('diameterStatus');
             diameterStatus.className = 'validation-status ' + (r.diameterPass ? 'status-pass' : 'status-fail');
             diameterStatus.innerHTML = r.diameterMsg.join('<br>');
 
-            // Bevel results
             document.getElementById('bevelAngle').textContent = `${r.angle}°`;
             const bevelStatus = document.getElementById('bevelStatus');
             bevelStatus.className = 'validation-status ' + (r.bevelPass ? 'status-pass' : 'status-fail');
             bevelStatus.textContent = r.bevelMsg;
 
-            // Thickness results
-            document.getElementById('edgeThicknessResult').textContent = 
-                `${displaye.toFixed(currentUnits === 'SI' ? 3 : 4)} ${unitLabel}`;
-            document.getElementById('thicknessResult').textContent = 
-                `${displayE.toFixed(currentUnits === 'SI' ? 3 : 4)} ${unitLabel}`;
+            document.getElementById('edgeThicknessResult').textContent = `${displaye.toFixed(currentUnits === 'SI' ? 3 : 4)} ${unitLabel}`;
+            document.getElementById('thicknessResult').textContent = `${displayE.toFixed(currentUnits === 'SI' ? 3 : 4)} ${unitLabel}`;
             const thicknessStatus = document.getElementById('thicknessStatus');
             thicknessStatus.className = 'validation-status ' + (r.thicknessPass ? 'status-pass' : 'status-fail');
             thicknessStatus.innerHTML = r.thicknessMsg.join('<br>');
 
-            // Roughness results
-            document.getElementById('roughnessResult').textContent = 
-                `${displayRa.toFixed(currentUnits === 'SI' ? 2 : 1)} ${roughnessUnit}`;
+            document.getElementById('roughnessResult').textContent = `${displayRa.toFixed(currentUnits === 'SI' ? 2 : 1)} ${roughnessUnit}`;
             const roughnessStatus = document.getElementById('roughnessStatus');
             roughnessStatus.className = 'validation-status ' + (r.roughnessPass ? 'status-pass' : 'status-fail');
             roughnessStatus.textContent = r.roughnessMsg;
 
-            // Flatness results (display percentage)
             document.getElementById('flatnessResult').textContent = `${r.flatnessPercentage.toFixed(3)}%`;
             const flatnessStatus = document.getElementById('flatnessStatus');
             flatnessStatus.className = 'validation-status ' + (r.flatnessPass ? 'status-pass' : 'status-fail');
             flatnessStatus.textContent = r.flatnessMsg;
 
-            // Scroll to results
             document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -879,10 +974,10 @@
             }
 
             const r = validationResults;
-            const date = new Date().toLocaleDateString('en-CA'); // 'en-CA' gives YYYY-MM-DD format in local time
+            const date = new Date().toLocaleDateString('en-CA');
             const time = new Date().toLocaleTimeString();
 
-            // FIXED: Capture exact values from page inputs with their displayed units
+            // Helper functions to get displayed values with units for input fields
             const getDisplayValue = (inputId, unitId) => {
                 const value = parseFloat(document.getElementById(inputId).value);
                 const unit = document.getElementById(unitId).value;
@@ -909,10 +1004,8 @@
                 }
             };
 
-            // Create workbook
             const wb = XLSX.utils.book_new();
 
-            // FIXED: Create data array with only 3 columns (A, B, C)
             const data = [
                 ['ISO 5167 Orifice Plate Validation Report', '', ''],
                 ['Date:', date, `Time: ${time}`],
@@ -920,7 +1013,7 @@
                 ['Tag Number:', document.getElementById('tagNumber').value, `Client: ${document.getElementById('client').value}`],
                 ['Standard:', 'ISO 5167-2:2003', ''],
                 ['', '', ''],
-                ['INPUTS', 'Value', ''],
+                ['INPUTS', 'Value', 'Status'],
                 ['Meter tube bore (D)', getDisplayValue('meterTubeBore', 'unitD'), ''],
                 ['Edge thickness (e)', getDisplayValue('edgeThickness', 'unitE'), ''],
                 ['Plate thickness (E)', getDisplayValue('thickness', 'unitT'), ''],
@@ -948,14 +1041,12 @@
 
             const ws = XLSX.utils.aoa_to_sheet(data);
 
-            // Set column widths for compact printing
             ws['!cols'] = [
                 {wch: 30}, // Column A
                 {wch: 20}, // Column B
                 {wch: 60}  // Column C
             ];
 
-            // Set print area and page setup for single page
             ws['!margins'] = {
                 left: 0.5, right: 0.5,
                 top: 0.5, bottom: 0.5,
@@ -972,13 +1063,24 @@
 
             XLSX.utils.book_append_sheet(wb, ws, 'ISO 5167 Validation');
 
-            // Generate filename
             const tagNum = document.getElementById('tagNumber').value || 'Report';
             const filename = `ISO-5167-Validation-${tagNum}-${date}.xlsx`;
 
-            // Save file
             XLSX.writeFile(wb, filename);
         }
+
+        // PDF Preview functionality
+        document.getElementById('previewPdfBtn').addEventListener('click', function() {
+          const pdfUrl = './5167_2.pdf';
+          const iframe = document.getElementById('keltonPdfIframe');
+          iframe.src = pdfUrl;
+          document.getElementById('pdfPreviewContainer').classList.remove('hidden');
+        });
+
+        document.getElementById('closePdfPreview').addEventListener('click', function() {
+          document.getElementById('pdfPreviewContainer').classList.add('hidden');
+          document.getElementById('keltonPdfIframe').src = '';
+        });
     </script>
 </body>
 </html>
