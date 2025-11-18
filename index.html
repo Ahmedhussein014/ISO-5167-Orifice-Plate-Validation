@@ -558,12 +558,12 @@
         </div>
     </div>
 
-    <div id="pdfPreviewContainer" class="hidden">
-        <div style="text-align: right; padding: 8px;">
-            <button id="closePdfPreview">Close</button>
-        </div>
-        <iframe id="keltonPdfIframe" src=""></iframe>
-    </div>
+      //  <div id="pdfPreviewContainer" class="hidden">
+      //  <div style="text-align: right; padding: 8px;">
+        //    <button id="closePdfPreview">Close</button>
+     //   </div>
+      //  <iframe id="keltonPdfIframe" src=""></iframe>
+  //  </div>
 
     <script>
         let currentUnits = 'SI';
@@ -966,18 +966,18 @@
         }
 
         // PDF Preview functionality
-        document.getElementById('previewPdfBtn').addEventListener('click', function() {
-          const pdfUrl = './ISO 5167 Orifice Plate Validation - Kelton Flocalc.pdf';
-          const iframe = document.getElementById('keltonPdfIframe');
-          iframe.src = pdfUrl;
-          document.getElementById('pdfPreviewContainer').classList.remove('hidden');
-        });
+document.getElementById('previewPdfBtn').addEventListener('click', function() {
+  const pdfUrl = './5167_2.pdf';  // Adjust path if needed
+  window.open(pdfUrl, '_blank', 'fullscreen=yes');
+});
 
-        document.getElementById('closePdfPreview').addEventListener('click', function() {
-          document.getElementById('pdfPreviewContainer').classList.add('hidden');
+
+    //    document.getElementById('closePdfPreview').addEventListener('click', function() {
+     //     document.getElementById('pdfPreviewContainer').classList.add('hidden');
           document.getElementById('keltonPdfIframe').src = '';
         });
     </script>
 </body>
 </html>
+
 
