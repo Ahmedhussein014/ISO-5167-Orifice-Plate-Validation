@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ISO 5167 Orifice Plate Validation (2003 Edition)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -28,112 +29,21 @@
             overflow: hidden;
         }
 
-        header {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 2px solid #60a5fa;
-            position: relative;
-            background: rgba(30, 58, 138, 0.95);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
         }
 
-        .header-content {
-            max-width: 1400px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
         }
 
-        .signature-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .signature-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #22d3ee;
-            box-shadow: 0 4px 12px rgba(34,211,238,0.3);
-            flex-shrink: 0;
-        }
-
-        .signature-info {
-            min-width: 250px;
-            color: #e0f2fe;
-            text-align: left;
-        }
-
-        .signature-info h3 {
-            margin: 0 0 6px;
-            font-size: 22px;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .signature-info p {
-            margin: 0 0 4px;
-            font-size: 16px;
-            line-height: 1.4;
-        }
-
-        .contact-info {
-            margin: 0 0 8px;
-            font-size: 14px;
-            color: #cbd5e1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .contact-info a {
-            color: #22d3ee;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        .social-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 16px rgba(34,211,238,0.5);
-        }
-
-        .page-title {
-            flex: 1;
-            min-width: 300px;
-            text-align: left;
-            margin-left: 40px;
-            color: #fff;
-        }
-
-        .page-title h1 {
-            margin: 0 0 8px 0;
-            font-weight: 700;
-            font-size: 30px;
-            line-height: 1.2;
-        }
-
-        .page-title .muted {
-            color: #e0f2fe;
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
         }
 
         .main-content {
@@ -243,20 +153,6 @@
             background: #229954;
         }
 
-        .btn-info {
-            background-color: #22d3ee;
-            color: white;
-            border-radius: 5px;
-            border: none;
-            padding: 12px 24px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-info:hover {
-            background-color: #0aa9c8;
-        }
-
         .results-section {
             grid-column: 1 / -1;
         }
@@ -340,85 +236,85 @@
             display: none;
         }
 
-        #pdfPreviewContainer {
-            position: fixed;
-            top: 10%;
-            left: 10%;
-            width: 80%;
-            height: 80%;
-            background: white;
-            border: 2px solid #667eea;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-            z-index: 1000;
-        }
-
-        #keltonPdfIframe {
-            width: 100%;
-            height: 90%;
-            border: none;
-        }
-
-        #closePdfPreview {
-            background:#667eea;
-            color:white;
-            border:none;
-            border-radius:4px;
-            padding:6px 12px;
-            cursor:pointer;
-        }
-
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
-            }
-            .signature-content {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-            }
-            #pdfPreviewContainer {
-                top: 5%;
-                left: 5%;
-                width: 90%;
-                height: 90%;
             }
         }
     </style>
 </head>
 <body>
     <header>
-      <div class="header-content">
-        <div class="signature-wrapper">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 16px;">
+    <!-- Signature and Title Row -->
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      
+      <!-- Left: Signature -->
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="flex-shrink: 0;">
           <img src="me.png" alt="Ahmed Hussein" class="signature-photo" />
-          <div class="signature-info">
-            <h3>Ahmed Hussein</h3>
-            <p><strong>Senior Instrumentation and Maintenance Planning Engineer, GASCO</strong></p>
-            <p class="contact-info">
-              <strong>Mobile:</strong> 
-              <a href="tel:+201068798889">+201068798889</a>
-              <a href="https://wa.me/201068798889" target="_blank" rel="noopener noreferrer">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" title="Chat on WhatsApp" style="width: 24px; height: 24px; vertical-align: middle;" />
-              </a>
-            </p>
-            <div class="social-icons">
-              <a href="https://www.linkedin.com/in/ahmedhussein90/" target="_blank" rel="noopener noreferrer">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" title="LinkedIn Profile" class="social-icon" />
-              </a>
-              <a href="https://www.credly.com/badges/77121880-e979-459a-b5d4-7c8ee4590614/public_url" target="_blank" rel="noopener noreferrer">
-                <img src="cmrp.png" alt="CMRP Certified" title="CMRP Certification" class="social-icon" />
-              </a>
-              <a href="https://badgr.com/public/assertions/ylnHIYOdQ_62QFhQlnyI6A?identity__email=ahmed.h.abdelaziz%40xed.aucegypt.edu" target="_blank" rel="noopener noreferrer">
-                <img src="f3.jpg" alt="AUC Certificate" title="AUC Certificate of Achievement" class="social-icon" />
-              </a>
-            </div>
+        </div>
+        <div style="min-width: 250px; text-align: left;">
+          <h3 style="margin: 0 0 6px 0; color: #fff; font-size: 22px; font-weight: 600;">Ahmed Hussein</h3>
+          <p style="margin: 0 0 4px 0; color: #e0f2fe; font-size: 16px; line-height: 1.4;">
+            <strong>Senior Instrumentation and Maintenance Planning Engineer, GASCO</strong>
+          </p>
+
+          <p style="margin: 0 0 8px 0; color: #cbd5e1; font-size: 14px; display: flex; align-items: center; gap: 8px;">
+            <strong>Mobile:</strong> 
+            <a href="tel:+201068798889" style="color: #22d3ee; text-decoration: none; font-weight: 500;">+201068798889</a>
+            <a href="https://wa.me/201068798889" target="_blank" rel="noopener noreferrer" style="display: inline-block; text-decoration: none;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" title="Chat on WhatsApp" style="width: 24px; height: 24px; vertical-align: middle;" />
+            </a>
+          </p>
+
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="https://www.linkedin.com/in/ahmedhussein90/" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" title="LinkedIn Profile" class="social-icon" />
+            </a>
+            <a href="https://www.credly.com/badges/77121880-e979-459a-b5d4-7c8ee4590614/public_url" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+              <img src="cmrp.png" alt="CMRP Certified" title="CMRP Certification" class="social-icon" />
+            </a>
+            <a href="https://badgr.com/public/assertions/ylnHIYOdQ_62QFhQlnyI6A?identity__email=ahmed.h.abdelaziz%40xed.aucegypt.edu" target="_blank" rel="noopener noreferrer" style="display: block; text-decoration: none;">
+              <img src="f3.jpg" alt="AUC Certificate" title="AUC Certificate of Achievement" class="social-icon" />
+            </a>
           </div>
         </div>
-        <div class="page-title">
-          <h1>ISO 5167 Orifice Plate Validation<br />2003 Edition - Complete Validation Tool</h1>
-          <div class="muted"></div>
-        </div>
       </div>
-    </header>
+      
+      <!-- Right: Title -->
+<div style="flex: 1; min-width: 300px; text-align: left; margin-left: 40px;">
+  <h1 style="margin: 0 0 8px 0; color: #fff;">ISO 5167-2003 Edition <br />Orifice Plate Validation<br /> Complete Validation Tool</h1>
+  <div class="muted" style="color:#e0f2fe"></div>
+</div>
+
+      
+    </div>
+  </div>
+</header>
+
+<style>
+  .signature-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #22d3ee;
+    box-shadow: 0 4px 12px rgba(34,211,238,0.3);
+  }
+  .social-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .social-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px rgba(34,211,238,0.5);
+  }
+</style>
+
 
     <div class="container">
         <div class="main-content">
