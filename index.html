@@ -673,19 +673,6 @@
             const E = getValue('thickness', 'unitT');
             const angle = parseFloat(document.getElementById('angleOfBevel').value);
             const Ra = getValue('roughness', 'unitR', true); // roughness in mm
-
-            let flatness;
-            let flatnessPercentage;
-            if (flatnessMethod === 'calculated') {
-                const gap = getValue('flatnessGap', 'unitFG');
-                flatness = gap; // Gap in mm
-                flatnessPercentage = (gap / D) * 100; // Convert to percentage
-            } else {
-                // User enters percentage directly
-                flatnessPercentage = parseFloat(document.getElementById('flatnessDirect').value);
-                flatness = (flatnessPercentage / 100) * D; // Convert to mm
-            }
-
             const v = getValue('vertical', 'unitV');
             const rv = getValue('rightVertical', 'unitRV');
             const h = getValue('horizontal', 'unitH');
@@ -693,6 +680,18 @@
 
             // Calculate orifice diameter (mean of 4 measurements)
             const d = (v + rv + h + lv) / 4;
+            let flatness;
+
+let flatnessLimit = 0.005 * ((D - d) / 2);
+let flatnessGap = flatnessMethod === 'calculated'
+    ? getValue('flatnessGap', 'unitFG')  // measured flatness gap input
+    : (parseFloat(document.getElementById('flatnessDirect').value) / 100) * ((D - d) / 2);  // user percentage converted to gap
+
+let flatnessPercentage = (flatnessGap / ((D - d) / 2)) * 100; // calculate percentage relative to half-gap
+
+
+
+
 
             // Calculate beta ratio
             const beta = d / D;
@@ -980,7 +979,6 @@ document.getElementById('previewPdfBtn').addEventListener('click', function() {
     </script>
 </body>
 </html>
-
 
 
 
