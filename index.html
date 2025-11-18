@@ -125,6 +125,17 @@
             transition: all 0.3s;
         }
 
+        #previewPdfBtn {
+    background-color: #22d3ee; /* Custom blue color */
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -492,7 +503,7 @@
                     <button class="btn btn-primary" onclick="calculate()">Calculate</button>
                     <button class="btn btn-secondary" onclick="reset()">Reset</button>
                     <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
-                    <button class="btn btn-info" id="previewPdfBtn">Preview Kelton Report</button>
+                    <button class="btn btn-info" id="previewPdfBtn">Preview Kelton Flocalc Validation Report</button>
                 </div>
             </div>
             
@@ -969,6 +980,7 @@ document.getElementById('previewPdfBtn').addEventListener('click', function() {
     </script>
 </body>
 </html>
+
 
 
 
